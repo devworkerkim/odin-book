@@ -20,7 +20,7 @@ router.post('/', function (req, res, next) {
     req.login(user, {session: false}, (err) => {
       if (err) res.send(err); 
       jwt.sign(user.toJSON(), process.env.TOKEN_SECRET/*, {expiresIn: 300}*/, function (err, token) {
-        return res.cookie('jwt', token).redirect('/home');
+        return res.cookie('jwt', token).redirect('/posts');
       });
     });
   })(req, res);
@@ -28,9 +28,6 @@ router.post('/', function (req, res, next) {
 
 router.get('/logout', function(req, res) {
   res.clearCookie('jwt').redirect('/');
-})
+});
 
-router.get('/home', passport.authenticate('jwt', {session: false}), function(req, res, next) {
-  res.render('home');
-})
 module.exports = router;
