@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User List</title>
+</head>
+<body>
+    <h1>User List</h1>
+    <% for (let user of userList) { %>
+        <div id="<%- user._id %>">
+            <h2><%- user.first_name %> <%- user.last_name %></h2>
+            <% if (current_user._id.toString() === user._id.toString()) { %>
+                <p>Me</p>
+            <% } else if (current_user.friends.includes(user._id)) { %>
+                <p>Friends</p>
+            <% } else if (current_user.invite_sent.includes(user._id)) { %>
+                <p>Waiting For Accept</p>
+            <% } else if (current_user.invite_received.includes(user._id)) { %>
+                <p>Accept Request</p>
+                <form action="/users/accept_friend_request/<%- user._id %>" method="post">
+                    <input type="submit" value="Accept Friend Request">
+                </form>
+                <form action="/users/reject_friend_request/<%- user._id %>" method="post">
+                    <input type="submit" value="Reject Friend Request">
+                </form>
+            <% } else { %>
+                <p>Add Friend</p>
+                <form action="/users/send_friend_request/<%- user._id %>" method="post">
+                    <input type="submit" value="Add Friend">
+                </form>
+            <% } %>
+        </div>
+    <% } %>
+</body>
+</html>

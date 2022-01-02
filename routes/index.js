@@ -19,7 +19,7 @@ router.post('/', function (req, res, next) {
     }
     req.login(user, {session: false}, (err) => {
       if (err) res.send(err); 
-      jwt.sign(user.toJSON(), process.env.TOKEN_SECRET, {expiresIn: 300}, function (err, token) {
+      jwt.sign(user.toJSON(), process.env.TOKEN_SECRET/*, {expiresIn: 300}*/, function (err, token) {
         return res.cookie('jwt', token).redirect('/home');
       });
     });
