@@ -5,7 +5,7 @@ const Post = require('../models/post');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-  Post.find({}, function (err, postsList) {
+  Post.find({}).sort({ date_created: 'descending' }).exec( function (err, postsList) {
     if (err) console.error(err);
     res.render('posts', { postsList: postsList, current_user: req.user });
   });
@@ -78,6 +78,25 @@ router.put('/:postid/unlike', function(req, res, next) {
         const newLikeList = post.likes;
         newLikeList.splice(newLikeList.findIndex((userid) => userid.toString() === req.user._id.toString()), 1);
         post.likes = newLikeList;
+        post.save(function(err) {
+            if (err) console.error(err);
+            res.redirect('/posts');
+        });
+    });
+});
+
+/* POST add comment to post */
+router.post('/:postid/add_comment', function(req, res, next) {
+    Post.findById(req.params.postid, function(err, post) {
+        if (err) console.error(err);
+        const newCommentList = post.comments;
+        newCommentList.push({
+            author_id: req.user._id,
+            author_firstname: req.user.first_name,
+            author_lastname: req.user.last_name,
+            body: req.body.comment
+        });
+        post.comments = newCommentList;
         post.save(function(err) {
             if (err) console.error(err);
             res.redirect('/posts');

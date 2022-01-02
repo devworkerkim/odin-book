@@ -27,6 +27,7 @@
                         <input type="submit" value="Like">
                     </form>
                 <% } %>
+                <h3>Comments</h3>
                 <% for (let comment of post.comments) { %>
                     <div>
                         <h4><%- comment.author_firstname %> <%- comment.author_lastname %></h4>
@@ -34,6 +35,10 @@
                         <p><%- comment.body %></p>
                     </div>
                 <% } %>
+                <form action="/posts/<%- post._id %>/add_comment" method="post">
+                    <textarea name="comment" id="comment"></textarea>
+                    <input type="submit" value="Add Comment" />
+                </form>
             </div>
         <% } %>
     <% } %>

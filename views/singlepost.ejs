@@ -12,8 +12,21 @@
         <textarea id="body" name="body"><%- post.body %></textarea>
         <input type="submit" value="Update Post" />
     </form>
+    <a href="/posts"><button>Cancel</button></a>
     <form action="/posts/<%- post._id %>?_method=delete" method="post">
         <input type="submit" value="Delete Post" />
+    </form>
+    <h3>Comments</h3>
+    <% for (let comment of post.comments) { %>
+        <div>
+            <h4><%- comment.author_firstname %> <%- comment.author_lastname %></h4>
+            <h5><%- comment.date_created %></h5>
+            <p><%- comment.body %></p>
+        </div>
+    <% } %>
+    <form action="/posts/<%- post._id %>/add_comment" method="post">
+        <textarea name="comment" id="comment"></textarea>
+        <input type="submit" value="Add Comment" />
     </form>
 </body>
 </html>
