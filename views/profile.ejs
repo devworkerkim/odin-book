@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+</head>
+<body>
+    <h1>User Profile for <%- current_user.first_name %> <%- current_user.last_name %></h1>
+    <form action="/users/<%- current_user._id %>?_method=put" method="post">
+        <label for="firstname">First Name: </label>
+        <input type="text" name="firstname" id="firstname" value="<%- current_user.first_name %>" />
+        <label for="lastname">Last Name: </label>
+        <input type="text" name="lastname" id="lastname" value="<%- current_user.last_name %>" />
+        <label for="email">Email: </label>
+        <input type="email" name="email" id="email" value="<%- current_user.email %>" />
+        <input type="submit" value="Update">
+    </form>
+    <h2>Posts</h2>
+    <% for (let post of postsList) { %>
+        <div>
+            <h3><%- post.author_firstname %> <%- post.author_lastname %></h3>
+            <h4><%- post.date_created %></h4>
+            <p><%- post.body %></p>
+            <p><%- post.likes.length %> Likes</p>
+            <p><%- post.comments.length %> Comments</p>
+            <a href="/posts/<%- post._id %>"><button>Edit Post</button></a>
+        </div>
+    <% } %>
+</body>
+</html>

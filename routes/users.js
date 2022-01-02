@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
+const Post = require('../models/post');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -82,5 +83,31 @@ router.post('/reject_friend_request/:_id', function(req, res, next) {
     });
   });
 });
+
+/* GET user profile page */
+router.get('/:id', function(req, res, next) {
+  User.findById(req.params.id, function (err, user) {
+    if (err) console.error(err);
+    if (user._id.toString() !== req.user._id.toString()) res.redirect('/posts');
+    else {
+      Post.find({author_id: req.user._id}, function(err, posts) {
+        if (err) console.error(err);
+        res.render('profile', { postsList: posts, current_user: req.user });
+      });
+    }
+  });
+});
+
+/* PUT update user profile */
+router.put('/:id', function(req, res, next) {
+  User.findByIdAndUpdate(req.params.id, {
+    first_name: req.body.firstname,
+    last_name: req.body.lastname,
+    email: req.body.email
+  }, function (err, user) {
+    if (err) console.error(err);
+    res.redirect('/users/' + req.user._id);
+  })
+})
 
 module.exports = router;
