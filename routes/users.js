@@ -1,7 +1,19 @@
+const path = require('path');
 const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
 const Post = require('../models/post');
+const multer = require('multer');
+
+// Set Storage
+const storage = multer.diskStorage({
+    destination: './public/uploads',
+    filename: function(req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({storage: storage,}).single('image');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -109,5 +121,20 @@ router.put('/:id', function(req, res, next) {
     res.redirect('/users/' + req.user._id);
   })
 })
+
+router.post('/:id/add_image', function(req, res, next) {
+  upload(req, res, (err) => {
+    if (err) res.redirect('/users/' + req.user._id);
+    else if (req.file === undefined) {
+      res.redirect('/users/' + req.user._id);
+    }
+    else {
+      User.findByIdAndUpdate(req.params.id, {profile_image: req.file}, function(err, result) {
+        if (err) console.log(err);
+        res.redirect('/users/' + req.user._id);
+      });
+    }
+  });
+});
 
 module.exports = router;

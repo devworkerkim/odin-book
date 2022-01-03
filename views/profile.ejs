@@ -8,6 +8,13 @@
 </head>
 <body>
     <h1>User Profile for <%- current_user.first_name %> <%- current_user.last_name %></h1>
+    <% if (current_user.profile_image) { %>
+        <img src="/uploads/<%- current_user.profile_image.filename %>" />
+    <% } %>
+    <form action="/users/<%- current_user._id %>/add_image" method="post" enctype="multipart/form-data">
+        <input type="file" name="image" />
+        <input type="submit" value="Change Image" />
+    </form>
     <form action="/users/<%- current_user._id %>?_method=put" method="post">
         <label for="firstname">First Name: </label>
         <input type="text" name="firstname" id="firstname" value="<%- current_user.first_name %>" />
