@@ -8,6 +8,16 @@
 </head>
 <body>
     <h1>Edit Post</h1>
+    <% for (var image of post.images) { %>
+        <img src="/uploads/<%- image.filename %>" />
+        <form action="/posts/<%- post._id %>/delete_image/<%- image.filename %>?_method=delete" method="post">
+            <input type="submit" value="X">
+        </form>
+    <% } %>
+    <form action="/posts/<%- post._id %>/add_image" method="post" enctype="multipart/form-data">
+        <input type="file" name="image" />
+        <input type="submit" value="Add Image" />
+    </form>
     <form action="/posts/<%- post._id %>?_method=put" method="post">
         <textarea id="body" name="body"><%- post.body %></textarea>
         <input type="submit" value="Update Post" />

@@ -17,6 +17,9 @@
                     <a href="/posts/<%- post._id %>">Edit Post</a>
                 <% } %>
                 <p><%- post.body %></p>
+                <% for (var image of post.images) { %>
+                    <img src="/uploads/<%- image.filename %>" />
+                <% } %>
                 <p>Likes: <%- post.likes.length %></p>
                 <% if (post.likes.includes(current_user._id)) { %>
                     <form action="/posts/<%- post.id %>/unlike?_method=put" method="post">

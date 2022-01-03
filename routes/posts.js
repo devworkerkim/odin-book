@@ -1,7 +1,20 @@
+const path = require('path');
+const fs = require('fs');
 const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
 const Post = require('../models/post');
+const multer = require('multer');
+
+// Set Storage
+const storage = multer.diskStorage({
+    destination: './public/uploads',
+    filename: function(req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({storage: storage,}).single('image');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -100,6 +113,46 @@ router.post('/:postid/add_comment', function(req, res, next) {
         post.save(function(err) {
             if (err) console.error(err);
             res.redirect('/posts');
+        });
+    });
+});
+
+router.post('/:postid/add_image', function(req, res, next) {
+    upload(req, res, (err) => {
+        if (err) res.redirect('/posts/' + req.params.postid);
+        else if (req.file === undefined) {
+        res.redirect('/posts/' + req.params.postid);
+        }
+        else {
+        Post.findById(req.params.postid, function(err, post) {
+            if (err) console.log(err);
+            const newImageList = post.images;
+            newImageList.push(req.file);
+            post.images = newImageList;
+            post.save(function(err) {
+                if (err) console.error(err);
+                res.redirect('/posts/' + req.params.postid);
+            })
+        });
+        }
+    });
+});
+
+router.delete('/:postid/delete_image/:imagefilename', function(req, res, next) {
+    Post.findById(req.params.postid, function(err, post) {
+        if (err) console.log(err);
+        const newImageList = post.images;
+        newImageList.splice(newImageList.findIndex((image) => req.params.imagefilename === image.filename), 1);
+        post.images = newImageList;
+        post.save(function(err) {
+            if (err) console.error(err);
+            fs.unlink('public/uploads/' + req.params.imagefilename, (err) => {
+                if (err) {
+                    console.error(err);
+                    return;
+                }
+            });
+            res.redirect('/posts/' + req.params.postid);
         });
     });
 });
